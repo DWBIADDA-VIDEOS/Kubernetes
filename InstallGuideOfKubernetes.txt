@@ -1,0 +1,51 @@
+sudo su
+apt-get update
+
+apt-get install -y apt-transport-https
+
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add
+cat <<EOF > /etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+
+apt-get update
+apt-get install -y docker.io
+apt-get install -y kubelet kubeadm kubectl kubernetes-cni
+
+//Now create the ami of this machine
+******************************************************************************
+kubeadm init
+exit
+kubectl get node
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl get node
+kubectl get pods --all-namespaces
+
+Installing a CNI Network.
+sudo su -
+sysctl net.bridge.bridge-nf-call-iptables=1
+export kubever=$(kubectl version | base64 | tr -d '\n')
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$kubever"
+exit
+kubectl get nodes
+******************************************************************************
+Install worker nodes, the first node
+sudo su -
+kubeadm join 172.31.14.228:6443 --token 4vsvk1.k5hh3nmch8lc7jbc --discovery-token-ca-cert-hash sha256:23d547ff9e39aadcb72cef74cba3ff1adada223a0413ece5bca6cca80bd78057
+
+kubectl get nodes
+
+******************************************************************************
+Join the second node to the cluster, ssh into the slave node.
+
+sudo su -
+kubeadm join 172.31.14.228:6443 --token 4vsvk1.k5hh3nmch8lc7jbc --discovery-token-ca-cert-hash sha256:23d547ff9e39aadcb72cef74cba3ff1adada223a0413ece5bca6cca80bd78057
+
+
+
+******************************************************************************
+
+
