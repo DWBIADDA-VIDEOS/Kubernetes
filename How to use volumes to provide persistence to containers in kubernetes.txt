@@ -1,0 +1,44 @@
+sudo su
+
+kubectl get node
+
+sudo systemctl status docker
+
+@@Create and manage volumes
+
+@@Create a volume
+
+docker volume create my-vol
+
+@@List volumes
+
+docker volume ls
+
+@@Inspect a volume
+
+docker volume inspect my-vol
+
+@@Start a container with a volume
+
+docker run -d \
+  --name devtest \
+  --mount source=my-vol,target=/app \
+  nginx:latest
+
+
+@@Inspect the Application
+
+docker inspect devtest
+
+@@To stop and remove the conatiner
+
+docker container stop devtest
+
+docker container rm devtest
+
+@@To remove the volume 
+
+docker volume rm my-vol
+
+
+
